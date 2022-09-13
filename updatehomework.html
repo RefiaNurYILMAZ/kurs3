@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <button onclick="getCategories()">Get Categories</button>
+    </div>
+    <div style="display: flex">
+        <h1>Categories Count: </h1>
+        <h1 id="categoriesCount"></h1>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>UPDATE</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+
+
+    </table>
+
+</body>
+<script>
+
+    function getCategories() {
+
+        document.querySelector('tbody').innerHTML = "";
+
+
+        fetch("https://northwind.vercel.app/api/categories")
+            .then(res => res.json())
+            .then(data => {
+
+
+                document.getElementById('categoriesCount').innerHTML = data.length
+
+
+                data.forEach(element => {
+
+                    var trElement = document.createElement('tr');
+                    //
+                    //trElement.style.cssText += "float:right; padding-rigth:20px;";
+                    //
+
+                    var tdId = document.createElement('td');
+                    tdId.innerText = element.id;
+                    //
+                     tdId.style.cssText += "color: red; padding-right:20px;";
+                     //px
+
+                    var tdName = document.createElement('td');
+                    tdName.innerText = element.name;
+                      //
+                     tdName.style.cssText += " padding-right:20px;";
+                     //px
+
+
+
+                    var tdDescription = document.createElement('td');
+                    tdDescription.innerText = element.description;
+                      //
+                     tdDescription.style.cssText += " padding-right:20px;";
+                     //px
+
+
+                    var tdUpdate = document.createElement('td');
+                    tdUpdate.innerHTML = 'UPDATE'
+                    tdUpdate.style.cursor = 'pointer'
+                   
+                    tdUpdate.style.color = 'green';
+                    tdUpdate.id = element.id;
+
+                    tdUpdate.addEventListener('click', function (e) {
+
+                        let dataId = e.target.id;
+
+                        fetch("https://northwind.vercel.app/api/categories/" + dataId, {
+                            method: 'PUT',
+                            headers: {
+                                "Content-Type" : "application/json"
+                            },
+                            body: JSON.stringify(
+                                {
+                                "name": 'Test',
+                                "description" : 'Deneme'
+                                }
+                            )
+                        })
+                        .then(res => {
+                            if(res.status == 200){
+                                getCategories();
+                                console.log("Güncellenen element : ", trElement)
+                            }
+                        })
+
+
+                    })
+
+
+                    trElement.appendChild(tdId);
+                    trElement.appendChild(tdName);
+                    trElement.appendChild(tdDescription);
+                    trElement.appendChild(tdUpdate);
+
+
+
+                    document.getElementsByTagName('tbody')[0].appendChild(trElement);
+                    //console.log("id : ", trElement)
+
+
+                });
+
+            })
+
+
+    }
+
+</script>
+
+</html>
